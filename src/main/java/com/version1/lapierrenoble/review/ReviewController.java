@@ -6,10 +6,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/reviews")
 public class ReviewController {
 
 
@@ -19,23 +21,24 @@ public class ReviewController {
     @Autowired
     private ProspectService prospectService;
 
-    @GetMapping("reviews")
+    @GetMapping
     public List<Review> retrieveAllReview(){
         return reviewService.findAll();
     }
 
 
-    @PostMapping("reviews/{idProspect}")
+    @PostMapping("/{idProspect}")
     public boolean createReview(@PathVariable Integer idProspect,@Valid @RequestBody Review review){
         Optional<Prospect> prospect = prospectService.findById(idProspect);
         if( prospect.isPresent() ){
             review.setProspect(prospect.get());
+            review.setDatePublication(LocalDateTime.now());
             return reviewService.createReview(review);
         }
         return false;
     }
 
-    @PutMapping("reviews/{idProspect}")
+    @PutMapping("/{idProspect}")
     public boolean updateReview(@PathVariable Integer idProspect,@Valid @RequestBody Review review){
         Optional<Prospect> prospect = prospectService.findById(idProspect);
 

@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,8 @@ public class Review {
     @Min(1)
     @Max(5)
     private Integer note;
+
+    private LocalDateTime datePublication;
 
     @OneToOne
     private Prospect prospect;

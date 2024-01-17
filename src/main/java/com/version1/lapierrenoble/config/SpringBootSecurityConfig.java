@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.http.HttpRequest;
 
 
 @Configuration
@@ -50,9 +52,10 @@ public class SpringBootSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll());
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/reviews").permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET,"/reviews/**") .permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET,"/prospects/**") .permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET,"/messages/**") .permitAll());
         http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.csrf(AbstractHttpConfigurer::disable);
@@ -91,9 +94,12 @@ public class SpringBootSecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 WebMvcConfigurer.super.addCorsMappings(registry);
+
                 registry.addMapping("/**")
                         .allowedMethods("*")
-                        .allowedOrigins("http://localhost:8080");
+                        .allowedHeaders("*")
+                        .allowedOrigins("http://localhost:4200","http://localhost:58274");
+
             }
         };
     }
